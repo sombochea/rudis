@@ -14,10 +14,12 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 ## Supported Commands
 
 ### Connection
+
 - `PING [message]` - Ping the server
 - `ECHO message` - Echo the given string
 
 ### String Operations
+
 - `GET key` - Get the value of a key
 - `SET key value [EX seconds] [PX milliseconds]` - Set the string value of a key with optional expiry
 - `DEL key [key ...]` - Delete one or more keys
@@ -25,10 +27,12 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 - `EXPIRE key seconds` - Set a key's time to live in seconds
 
 ### Numeric Operations
+
 - `INCR key` - Increment the integer value of a key by one
 - `DECR key` - Decrement the integer value of a key by one
 
 ### List Operations
+
 - `LPUSH key value [value ...]` - Insert values at the head of the list
 - `RPUSH key value [value ...]` - Insert values at the tail of the list
 - `LPOP key` - Remove and return the first element of the list
@@ -38,6 +42,7 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 - `LINDEX key index` - Get an element by index
 
 ### Server Operations
+
 - `KEYS pattern` - Find all keys matching the given pattern
 - `DBSIZE` - Return the number of keys in the database
 - `FLUSHDB` - Remove all keys from the current database
@@ -45,6 +50,7 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 ## Quick Start
 
 ### Build and Run
+
 ```bash
 # Development mode
 cargo run
@@ -58,8 +64,9 @@ RUDIS_ADDR=0.0.0.0:6379 cargo run
 ```
 
 ### Run Tests
+
 ```bash
-./tests.sh
+./scripts/tests.sh
 ```
 
 ## Usage
@@ -82,31 +89,31 @@ OK
 2) "counter"
 ```
 
-See [EXAMPLES.md](EXAMPLES.md) for more usage examples.
+See [EXAMPLES](docs/EXAMPLES.md) for more usage examples.
 
 ## Architecture
 
 ### Components
 
 1. **RESP Parser** (`resp.rs`)
-   - Parses Redis Serialization Protocol
-   - Supports all RESP data types: Simple Strings, Errors, Integers, Bulk Strings, Arrays
-   - Serializes responses back to RESP format
+    - Parses Redis Serialization Protocol
+    - Supports all RESP data types: Simple Strings, Errors, Integers, Bulk Strings, Arrays
+    - Serializes responses back to RESP format
 
 2. **Store** (`store.rs`)
-   - Thread-safe in-memory HashMap with RwLock
-   - Supports key expiration with TTL
-   - Automatic cleanup of expired keys on access
+    - Thread-safe in-memory HashMap with RwLock
+    - Supports key expiration with TTL
+    - Automatic cleanup of expired keys on access
 
 3. **Command Handler** (`command.rs`)
-   - Parses commands from RESP arrays
-   - Executes commands against the store
-   - Returns properly formatted RESP responses
+    - Parses commands from RESP arrays
+    - Executes commands against the store
+    - Returns properly formatted RESP responses
 
 4. **TCP Server** (`server.rs`)
-   - Async TCP server using Tokio
-   - Handles multiple concurrent connections
-   - Spawns a new task for each client connection
+    - Async TCP server using Tokio
+    - Handles multiple concurrent connections
+    - Spawns a new task for each client connection
 
 ## Implementation Details
 
@@ -117,10 +124,9 @@ See [EXAMPLES.md](EXAMPLES.md) for more usage examples.
 
 ## Roadmap
 
-### Completed Features
-- [x] Lists (LPUSH, RPUSH, LPOP, RPOP, LRANGE, LLEN, LINDEX)
+### Features
 
-### Planned Features
+- [x] Lists (LPUSH, RPUSH, LPOP, RPOP, LRANGE, LLEN, LINDEX)
 - [ ] Sets (SADD, SREM, SMEMBERS, SISMEMBER)
 - [ ] Sorted Sets (ZADD, ZRANGE, ZREM)
 - [ ] Hashes (HSET, HGET, HDEL, HGETALL)
@@ -132,3 +138,7 @@ See [EXAMPLES.md](EXAMPLES.md) for more usage examples.
 ## License
 
 MIT
+
+## Contributors
+
+- Sambo Chea <cs@cubetiqs.com>

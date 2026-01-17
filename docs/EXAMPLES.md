@@ -1,8 +1,9 @@
-# Examples
+# Rudis Examples
 
 ## Basic Usage
 
 Start the server:
+
 ```bash
 cargo run
 ```
@@ -10,6 +11,7 @@ cargo run
 ## Using redis-cli
 
 ### Simple Operations
+
 ```bash
 # Connect to Rudis
 redis-cli -p 6379
@@ -38,6 +40,7 @@ OK
 ```
 
 ### Counter Operations
+
 ```bash
 # Initialize counter
 127.0.0.1:6379> SET counter 0
@@ -55,6 +58,7 @@ OK
 ```
 
 ### List Operations
+
 ```bash
 # Create a list
 127.0.0.1:6379> LPUSH tasks "buy milk"
@@ -98,6 +102,7 @@ OK
 ```
 
 ### Pattern Matching
+
 ```bash
 # Set multiple keys
 127.0.0.1:6379> SET user:1:name "Alice"
@@ -120,6 +125,7 @@ OK
 ```
 
 ### Expiration
+
 ```bash
 # Set key with 60 second expiration
 127.0.0.1:6379> SET session:abc "user_data" EX 60
@@ -137,6 +143,7 @@ OK
 ```
 
 ### Database Operations
+
 ```bash
 # Check database size
 127.0.0.1:6379> DBSIZE
@@ -152,26 +159,31 @@ OK
 ## Using from Code
 
 ### Rust
+
 ```rust
 use std::net::TcpStream;
 use std::io::{Read, Write};
 
 fn main() -> std::io::Result<()> {
     let mut stream = TcpStream::connect("127.0.0.1:6379")?;
-    
+
     // SET command: *3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$5\r\nvalue\r\n
     let cmd = b"*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$5\r\nvalue\r\n";
     stream.write_all(cmd)?;
-    
+
     let mut buffer = [0; 1024];
     let n = stream.read(&mut buffer)?;
     println!("Response: {:?}", String::from_utf8_lossy(&buffer[..n]));
-    
+
     Ok(())
 }
 ```
 
+### Go
+
+
 ### Python
+
 ```python
 import socket
 
@@ -197,34 +209,36 @@ sock.close()
 ```
 
 ### Node.js
+
 ```javascript
 const net = require('net');
 
 const client = net.createConnection({ port: 6379 }, () => {
-  console.log('Connected to Rudis');
-  
-  // Send PING command
-  const cmd = '*1\r\n$4\r\nPING\r\n';
-  client.write(cmd);
+    console.log('Connected to Rudis');
+
+    // Send PING command
+    const cmd = '*1\r\n$4\r\nPING\r\n';
+    client.write(cmd);
 });
 
 client.on('data', (data) => {
-  console.log('Response:', data.toString());
-  client.end();
+    console.log('Response:', data.toString());
+    client.end();
 });
 
 client.on('end', () => {
-  console.log('Disconnected');
+    console.log('Disconnected');
 });
 ```
 
 ## Performance Testing
 
 ### Using redis-benchmark
+
 ```bash
 # Install redis-tools if needed
 # brew install redis (macOS)
-# apt-get install redis-tools (Ubuntu)
+# sudo apt-get install redis-tools (Ubuntu)
 
 # Run benchmark
 redis-benchmark -h 127.0.0.1 -p 6379 -t set,get -n 100000 -q
