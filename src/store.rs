@@ -52,17 +52,15 @@ impl Store {
 
     pub fn get(&self, key: &str) -> Option<Vec<u8>> {
         let data = self.data.read().unwrap();
-        data.get(key).and_then(|v| {
-            match v {
-                Value::String(val) => {
-                    if val.is_expired() {
-                        None
-                    } else {
-                        Some(val.data.clone())
-                    }
+        data.get(key).and_then(|v| match v {
+            Value::String(val) => {
+                if val.is_expired() {
+                    None
+                } else {
+                    Some(val.data.clone())
                 }
-                Value::List(_) => None,
             }
+            Value::List(_) => None,
         })
     }
 
@@ -90,15 +88,13 @@ impl Store {
     pub fn exists(&self, keys: &[String]) -> usize {
         let data = self.data.read().unwrap();
         keys.iter()
-            .filter(|key| {
-                data.get(key.as_str()).is_some()
-            })
+            .filter(|key| data.get(key.as_str()).is_some())
             .count()
     }
 
     pub fn keys(&self, pattern: &str) -> Vec<String> {
         let data = self.data.read().unwrap();
-        
+
         if pattern == "*" {
             data.keys().cloned().collect()
         } else {
@@ -112,7 +108,7 @@ impl Store {
 
     pub fn incr(&self, key: &str) -> Result<i64, String> {
         let mut data = self.data.write().unwrap();
-        
+
         let current = if let Some(Value::String(val)) = data.get(key) {
             if val.is_expired() {
                 0
@@ -136,7 +132,7 @@ impl Store {
 
     pub fn decr(&self, key: &str) -> Result<i64, String> {
         let mut data = self.data.write().unwrap();
-        
+
         let current = if let Some(Value::String(val)) = data.get(key) {
             if val.is_expired() {
                 0
@@ -171,7 +167,7 @@ impl Store {
     // List operations
     pub fn lpush(&self, key: &str, values: Vec<Vec<u8>>) -> usize {
         let mut data = self.data.write().unwrap();
-        
+
         match data.get_mut(key) {
             Some(Value::List(list)) => {
                 for value in values.into_iter().rev() {
@@ -197,15 +193,13 @@ impl Store {
 
     pub fn rpush(&self, key: &str, values: Vec<Vec<u8>>) -> usize {
         let mut data = self.data.write().unwrap();
-        
+
         match data.get_mut(key) {
             Some(Value::List(list)) => {
                 list.extend(values);
                 list.len()
             }
-            Some(Value::String(_)) => {
-                0
-            }
+            Some(Value::String(_)) => 0,
             None => {
                 let len = values.len();
                 data.insert(key.to_string(), Value::List(values));
@@ -216,7 +210,7 @@ impl Store {
 
     pub fn lpop(&self, key: &str) -> Result<Option<Vec<u8>>, String> {
         let mut data = self.data.write().unwrap();
-        
+
         match data.get_mut(key) {
             Some(Value::List(list)) => {
                 if list.is_empty() {
@@ -234,11 +228,9 @@ impl Store {
 
     pub fn rpop(&self, key: &str) -> Result<Option<Vec<u8>>, String> {
         let mut data = self.data.write().unwrap();
-        
+
         match data.get_mut(key) {
-            Some(Value::List(list)) => {
-                Ok(list.pop())
-            }
+            Some(Value::List(list)) => Ok(list.pop()),
             Some(Value::String(_)) => {
                 Err("WRONGTYPE Operation against a key holding the wrong kind of value".to_string())
             }
@@ -248,19 +240,23 @@ impl Store {
 
     pub fn lrange(&self, key: &str, start: i64, stop: i64) -> Result<Vec<Vec<u8>>, String> {
         let data = self.data.read().unwrap();
-        
+
         match data.get(key) {
             Some(Value::List(list)) => {
                 let len = list.len() as i64;
-                
+
                 // Convert negative indices
-                let start_idx = if start < 0 { (len + start).max(0) } else { start };
+                let start_idx = if start < 0 {
+                    (len + start).max(0)
+                } else {
+                    start
+                };
                 let stop_idx = if stop < 0 { (len + stop).max(-1) } else { stop };
-                
+
                 // Clamp to valid range
                 let start_idx = (start_idx as usize).min(list.len());
                 let stop_idx = ((stop_idx + 1) as usize).min(list.len());
-                
+
                 if start_idx >= stop_idx {
                     Ok(Vec::new())
                 } else {
@@ -276,7 +272,7 @@ impl Store {
 
     pub fn llen(&self, key: &str) -> Result<usize, String> {
         let data = self.data.read().unwrap();
-        
+
         match data.get(key) {
             Some(Value::List(list)) => Ok(list.len()),
             Some(Value::String(_)) => {
@@ -288,12 +284,12 @@ impl Store {
 
     pub fn lindex(&self, key: &str, index: i64) -> Result<Option<Vec<u8>>, String> {
         let data = self.data.read().unwrap();
-        
+
         match data.get(key) {
             Some(Value::List(list)) => {
                 let len = list.len() as i64;
                 let idx = if index < 0 { len + index } else { index };
-                
+
                 if idx < 0 || idx >= len {
                     Ok(None)
                 } else {

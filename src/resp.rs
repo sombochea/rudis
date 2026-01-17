@@ -13,7 +13,7 @@ impl RESPValue {
     pub fn parse<R: Read>(reader: &mut BufReader<R>) -> io::Result<RESPValue> {
         let mut line = String::new();
         reader.read_line(&mut line)?;
-        
+
         if line.is_empty() {
             return Err(io::Error::new(io::ErrorKind::UnexpectedEof, "Empty line"));
         }
@@ -25,30 +25,33 @@ impl RESPValue {
             b'+' => Ok(RESPValue::SimpleString(content.to_string())),
             b'-' => Ok(RESPValue::Error(content.to_string())),
             b':' => {
-                let num = content.parse::<i64>()
+                let num = content
+                    .parse::<i64>()
                     .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
                 Ok(RESPValue::Integer(num))
             }
             b'$' => {
-                let len = content.parse::<i64>()
+                let len = content
+                    .parse::<i64>()
                     .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-                
+
                 if len == -1 {
                     return Ok(RESPValue::BulkString(None));
                 }
 
                 let mut buffer = vec![0u8; len as usize];
                 reader.read_exact(&mut buffer)?;
-                
+
                 let mut crlf = [0u8; 2];
                 reader.read_exact(&mut crlf)?;
 
                 Ok(RESPValue::BulkString(Some(buffer)))
             }
             b'*' => {
-                let count = content.parse::<i64>()
+                let count = content
+                    .parse::<i64>()
                     .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))?;
-                
+
                 if count == -1 {
                     return Ok(RESPValue::Array(None));
                 }

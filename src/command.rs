@@ -12,10 +12,7 @@ impl Command {
         match value {
             RESPValue::Array(Some(arr)) if !arr.is_empty() => {
                 let name = arr[0].as_string()?.to_uppercase();
-                let args = arr[1..]
-                    .iter()
-                    .filter_map(|v| v.as_bulk_string())
-                    .collect();
+                let args = arr[1..].iter().filter_map(|v| v.as_bulk_string()).collect();
                 Some(Command { name, args })
             }
             _ => None,
@@ -120,7 +117,8 @@ impl Command {
             return RESPValue::Error("ERR wrong number of arguments for 'del' command".to_string());
         }
 
-        let keys: Vec<String> = self.args
+        let keys: Vec<String> = self
+            .args
             .iter()
             .map(|k| String::from_utf8_lossy(k).to_string())
             .collect();
@@ -131,10 +129,13 @@ impl Command {
 
     fn handle_exists(&self, store: &Store) -> RESPValue {
         if self.args.is_empty() {
-            return RESPValue::Error("ERR wrong number of arguments for 'exists' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'exists' command".to_string(),
+            );
         }
 
-        let keys: Vec<String> = self.args
+        let keys: Vec<String> = self
+            .args
             .iter()
             .map(|k| String::from_utf8_lossy(k).to_string())
             .collect();
@@ -145,12 +146,14 @@ impl Command {
 
     fn handle_keys(&self, store: &Store) -> RESPValue {
         if self.args.len() != 1 {
-            return RESPValue::Error("ERR wrong number of arguments for 'keys' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'keys' command".to_string(),
+            );
         }
 
         let pattern = String::from_utf8_lossy(&self.args[0]).to_string();
         let keys = store.keys(&pattern);
-        
+
         let resp_keys: Vec<RESPValue> = keys
             .into_iter()
             .map(|k| RESPValue::BulkString(Some(k.into_bytes())))
@@ -161,7 +164,9 @@ impl Command {
 
     fn handle_incr(&self, store: &Store) -> RESPValue {
         if self.args.len() != 1 {
-            return RESPValue::Error("ERR wrong number of arguments for 'incr' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'incr' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
@@ -173,7 +178,9 @@ impl Command {
 
     fn handle_decr(&self, store: &Store) -> RESPValue {
         if self.args.len() != 1 {
-            return RESPValue::Error("ERR wrong number of arguments for 'decr' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'decr' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
@@ -195,7 +202,9 @@ impl Command {
 
     fn handle_expire(&self, store: &Store) -> RESPValue {
         if self.args.len() != 2 {
-            return RESPValue::Error("ERR wrong number of arguments for 'expire' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'expire' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
@@ -217,35 +226,41 @@ impl Command {
 
     fn handle_lpush(&self, store: &Store) -> RESPValue {
         if self.args.len() < 2 {
-            return RESPValue::Error("ERR wrong number of arguments for 'lpush' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'lpush' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
         let values: Vec<Vec<u8>> = self.args[1..].to_vec();
-        
+
         let len = store.lpush(&key, values);
         RESPValue::Integer(len as i64)
     }
 
     fn handle_rpush(&self, store: &Store) -> RESPValue {
         if self.args.len() < 2 {
-            return RESPValue::Error("ERR wrong number of arguments for 'rpush' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'rpush' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
         let values: Vec<Vec<u8>> = self.args[1..].to_vec();
-        
+
         let len = store.rpush(&key, values);
         RESPValue::Integer(len as i64)
     }
 
     fn handle_lpop(&self, store: &Store) -> RESPValue {
         if self.args.len() != 1 {
-            return RESPValue::Error("ERR wrong number of arguments for 'lpop' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'lpop' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
-        
+
         match store.lpop(&key) {
             Ok(Some(value)) => RESPValue::BulkString(Some(value)),
             Ok(None) => RESPValue::BulkString(None),
@@ -255,11 +270,13 @@ impl Command {
 
     fn handle_rpop(&self, store: &Store) -> RESPValue {
         if self.args.len() != 1 {
-            return RESPValue::Error("ERR wrong number of arguments for 'rpop' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'rpop' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
-        
+
         match store.rpop(&key) {
             Ok(Some(value)) => RESPValue::BulkString(Some(value)),
             Ok(None) => RESPValue::BulkString(None),
@@ -269,7 +286,9 @@ impl Command {
 
     fn handle_lrange(&self, store: &Store) -> RESPValue {
         if self.args.len() != 3 {
-            return RESPValue::Error("ERR wrong number of arguments for 'lrange' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'lrange' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
@@ -279,7 +298,7 @@ impl Command {
         let stop = String::from_utf8_lossy(&self.args[2])
             .parse::<i64>()
             .unwrap_or(-1);
-        
+
         match store.lrange(&key, start, stop) {
             Ok(values) => {
                 let resp_values: Vec<RESPValue> = values
@@ -294,11 +313,13 @@ impl Command {
 
     fn handle_llen(&self, store: &Store) -> RESPValue {
         if self.args.len() != 1 {
-            return RESPValue::Error("ERR wrong number of arguments for 'llen' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'llen' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
-        
+
         match store.llen(&key) {
             Ok(len) => RESPValue::Integer(len as i64),
             Err(e) => RESPValue::Error(e),
@@ -307,14 +328,16 @@ impl Command {
 
     fn handle_lindex(&self, store: &Store) -> RESPValue {
         if self.args.len() != 2 {
-            return RESPValue::Error("ERR wrong number of arguments for 'lindex' command".to_string());
+            return RESPValue::Error(
+                "ERR wrong number of arguments for 'lindex' command".to_string(),
+            );
         }
 
         let key = String::from_utf8_lossy(&self.args[0]).to_string();
         let index = String::from_utf8_lossy(&self.args[1])
             .parse::<i64>()
             .unwrap_or(0);
-        
+
         match store.lindex(&key, index) {
             Ok(Some(value)) => RESPValue::BulkString(Some(value)),
             Ok(None) => RESPValue::BulkString(None),
