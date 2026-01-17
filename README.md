@@ -28,6 +28,15 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 - `INCR key` - Increment the integer value of a key by one
 - `DECR key` - Decrement the integer value of a key by one
 
+### List Operations
+- `LPUSH key value [value ...]` - Insert values at the head of the list
+- `RPUSH key value [value ...]` - Insert values at the tail of the list
+- `LPOP key` - Remove and return the first element of the list
+- `RPOP key` - Remove and return the last element of the list
+- `LRANGE key start stop` - Get a range of elements from the list
+- `LLEN key` - Get the length of the list
+- `LINDEX key index` - Get an element by index
+
 ### Server Operations
 - `KEYS pattern` - Find all keys matching the given pattern
 - `DBSIZE` - Return the number of keys in the database
@@ -108,8 +117,10 @@ See [EXAMPLES.md](EXAMPLES.md) for more usage examples.
 
 ## Roadmap
 
+### Completed Features
+- [x] Lists (LPUSH, RPUSH, LPOP, RPOP, LRANGE, LLEN, LINDEX)
+
 ### Planned Features
-- [ ] Lists (LPUSH, RPUSH, LPOP, RPOP, LRANGE)
 - [ ] Sets (SADD, SREM, SMEMBERS, SISMEMBER)
 - [ ] Sorted Sets (ZADD, ZRANGE, ZREM)
 - [ ] Hashes (HSET, HGET, HDEL, HGETALL)

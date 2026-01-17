@@ -54,6 +54,49 @@ OK
 (integer) 1
 ```
 
+### List Operations
+```bash
+# Create a list
+127.0.0.1:6379> LPUSH tasks "buy milk"
+(integer) 1
+127.0.0.1:6379> LPUSH tasks "walk dog" "write code"
+(integer) 3
+
+# Add to end
+127.0.0.1:6379> RPUSH tasks "sleep"
+(integer) 4
+
+# View list
+127.0.0.1:6379> LRANGE tasks 0 -1
+1) "write code"
+2) "walk dog"
+3) "buy milk"
+4) "sleep"
+
+# Get length
+127.0.0.1:6379> LLEN tasks
+(integer) 4
+
+# Get by index
+127.0.0.1:6379> LINDEX tasks 0
+"write code"
+127.0.0.1:6379> LINDEX tasks -1
+"sleep"
+
+# Remove from head
+127.0.0.1:6379> LPOP tasks
+"write code"
+
+# Remove from tail
+127.0.0.1:6379> RPOP tasks
+"sleep"
+
+# View remaining
+127.0.0.1:6379> LRANGE tasks 0 -1
+1) "walk dog"
+2) "buy milk"
+```
+
 ### Pattern Matching
 ```bash
 # Set multiple keys

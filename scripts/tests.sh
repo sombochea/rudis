@@ -133,6 +133,26 @@ wait
 redis-cli -p 6379 DBSIZE
 
 echo ""
+echo "=== List Operations ==="
+redis-cli -p 6379 FLUSHDB
+redis-cli -p 6379 LPUSH mylist "three"
+redis-cli -p 6379 LPUSH mylist "two"
+redis-cli -p 6379 LPUSH mylist "one"
+echo "List contents:"
+redis-cli -p 6379 LRANGE mylist 0 -1
+redis-cli -p 6379 LLEN mylist
+redis-cli -p 6379 RPUSH mylist "four" "five"
+echo "After RPUSH:"
+redis-cli -p 6379 LRANGE mylist 0 -1
+redis-cli -p 6379 LPOP mylist
+redis-cli -p 6379 RPOP mylist
+echo "After POP operations:"
+redis-cli -p 6379 LRANGE mylist 0 -1
+redis-cli -p 6379 LINDEX mylist 0
+redis-cli -p 6379 LINDEX mylist 1
+redis-cli -p 6379 LINDEX mylist 2
+
+echo ""
 echo "=========================================="
 echo "✓ All tests completed successfully!"
 echo "=========================================="
