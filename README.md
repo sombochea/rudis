@@ -135,6 +135,15 @@ See [EXAMPLES](docs/EXAMPLES.md) for more usage examples.
 - [ ] Transactions (MULTI/EXEC)
 - [ ] Replication (master-slave)
 
+### Server Improvements
+
+- [ ] Configuration file support
+- [ ] Logging
+- [ ] Metrics and monitoring
+- [ ] Improved error handling
+- [ ] Performance optimizations
+- [ ] Add support commands `INFO`, `CONFIG`
+
 ## License
 
 MIT

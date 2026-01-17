@@ -181,6 +181,47 @@ fn main() -> std::io::Result<()> {
 
 ### Go
 
+```go
+package main
+
+import (
+    "fmt"
+    "net"
+)
+
+func sendCommand(conn net.Conn, args ...string) (string, error) {
+    command := fmt.Sprintf("*%d\r\n", len(args))
+    for _, arg := range args {
+        command += fmt.Sprintf("$%d\r\n%s\r\n", len(arg), arg)
+    }
+    _, err := conn.Write([]byte(command))
+    if err != nil {
+        return "", err
+    }
+
+    buffer := make([]byte, 1024)
+    n, err := conn.Read(buffer)
+    if err != nil {
+        return "", err
+    }
+    return string(buffer[:n]), nil
+}
+
+func main() {
+    conn, err := net.Dial("tcp", "127.0.0.1:6379")
+    if err != nil {
+        panic(err)
+    }
+    defer conn.Close()
+
+    // Example usage
+    response, err := sendCommand(conn, "PING")
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("Response:", response)
+}
+```
 
 ### Python
 
