@@ -22,6 +22,7 @@ impl Command {
     pub fn execute(&self, store: &Store) -> RESPValue {
         match self.name.as_str() {
             "PING" => self.handle_ping(),
+            "INFO" => self.handle_info(),
             "ECHO" => self.handle_echo(),
             "GET" => self.handle_get(store),
             "SET" => self.handle_set(store),
@@ -51,6 +52,14 @@ impl Command {
         } else {
             RESPValue::BulkString(Some(self.args[0].clone()))
         }
+    }
+
+    fn handle_info(&self) -> RESPValue {
+        // return server information
+        // # Server
+        // rudis_version:0.1.0
+        let info = "# Server\r\nrudis_version:0.1.0\r\n";
+        RESPValue::BulkString(Some(info.as_bytes().to_vec()))
     }
 
     fn handle_echo(&self) -> RESPValue {
