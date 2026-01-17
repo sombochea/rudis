@@ -7,8 +7,9 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 - **RESP Protocol**: Full implementation of Redis Serialization Protocol (RESP)
 - **TCP Server**: Async TCP server using Tokio
 - **In-Memory Store**: Thread-safe key-value storage with RwLock
-- **TTL Support**: Keys can expire after a specified time
-- **Multiple Data Operations**: Support for strings, integers, and basic operations
+- **TTL Support**: Keys can expire after a specified time (seconds/milliseconds)
+- **Concurrency**: Handles 20+ simultaneous connections
+- **Error Handling**: Redis-compatible error messages
 
 ## Supported Commands
 
@@ -32,54 +33,47 @@ A Redis-like in-memory data store implementation in Rust, built from scratch.
 - `DBSIZE` - Return the number of keys in the database
 - `FLUSHDB` - Remove all keys from the current database
 
-## Building and Running
+## Quick Start
 
-### Build
+### Build and Run
 ```bash
-cargo build --release
-```
-
-### Run
-```bash
+# Development mode
 cargo run
-```
 
-Or specify a custom address:
-```bash
+# Production mode
+cargo build --release
+./target/release/rudis
+
+# Custom address
 RUDIS_ADDR=0.0.0.0:6379 cargo run
 ```
 
-## Testing with redis-cli
+### Run Tests
+```bash
+./tests.sh
+```
 
-You can test Rudis using the standard Redis CLI:
+## Usage
+
+Connect using standard Redis CLI:
 
 ```bash
 redis-cli -p 6379
 
-# Basic operations
 127.0.0.1:6379> PING
 PONG
 127.0.0.1:6379> SET mykey "Hello"
 OK
 127.0.0.1:6379> GET mykey
 "Hello"
-127.0.0.1:6379> SET counter 10
-OK
 127.0.0.1:6379> INCR counter
-(integer) 11
-127.0.0.1:6379> DEL mykey
 (integer) 1
-127.0.0.1:6379> EXISTS mykey
-(integer) 0
 127.0.0.1:6379> KEYS *
-1) "counter"
-
-# TTL operations
-127.0.0.1:6379> SET session "data" EX 60
-OK
-127.0.0.1:6379> SET cache "value" PX 5000
-OK
+1) "mykey"
+2) "counter"
 ```
+
+See [EXAMPLES.md](EXAMPLES.md) for more usage examples.
 
 ## Architecture
 
@@ -112,16 +106,17 @@ OK
 - **Memory Safety**: Leverages Rust's ownership system for safety guarantees
 - **Zero-Copy**: Uses `Vec<u8>` for binary data to avoid unnecessary allocations
 
-## Future Enhancements
+## Roadmap
 
+### Planned Features
+- [ ] Lists (LPUSH, RPUSH, LPOP, RPOP, LRANGE)
+- [ ] Sets (SADD, SREM, SMEMBERS, SISMEMBER)
+- [ ] Sorted Sets (ZADD, ZRANGE, ZREM)
+- [ ] Hashes (HSET, HGET, HDEL, HGETALL)
 - [ ] Persistence (RDB snapshots, AOF)
-- [ ] Replication (master-slave)
 - [ ] Pub/Sub messaging
-- [ ] Lua scripting
 - [ ] Transactions (MULTI/EXEC)
-- [ ] Lists, Sets, Sorted Sets, Hashes
-- [ ] Cluster mode
-- [ ] Benchmarking tools
+- [ ] Replication (master-slave)
 
 ## License
 
