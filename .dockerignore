@@ -1,0 +1,13 @@
+.git
+.gitignore
+.github
+target
+docs
+scripts
+*.md
+.DS_Store
+.env
+.env.local
+*.log
+server.log
+Cargo.lock
