@@ -1,5 +1,5 @@
 # Build stage - optimized for minimal output
-FROM rust:latest as builder
+FROM rust:latest AS builder
 
 WORKDIR /build
 
@@ -12,9 +12,10 @@ COPY src ./src
 # Build with optimizations for release
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/build/target \
-    RUSTFLAGS="-C target-cpu=native -C opt-level=3 -C lto=fat -C codegen-units=1" \
+    RUSTFLAGS="-C opt-level=3 -C lto=thin -C codegen-units=16 -C strip=symbols" \
     cargo build --release && \
-    cp target/release/rudis /build/rudis
+    cp target/release/rudis /build/rudis && \
+    strip /build/rudis
 
 # Final stage - scratch image for minimal footprint
 FROM scratch
