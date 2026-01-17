@@ -12,7 +12,6 @@ COPY src ./src
 # Build with optimizations for release
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/build/target \
-    RUSTFLAGS="-C opt-level=3 -C lto=thin -C codegen-units=16 -C strip=symbols" \
     cargo build --release && \
     cp target/release/rudis /build/rudis && \
     strip /build/rudis
